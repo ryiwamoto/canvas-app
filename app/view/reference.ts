@@ -1,0 +1,1 @@
+///<reference path="./io/localImageLoader/LocalImageLoaderView.ts"/>

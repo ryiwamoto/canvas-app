@@ -40,6 +40,10 @@ class FilteredImageView implements FilteredImageEvents.FilteredImageEventListene
         this.repaintCanvas(this.filteredImage.resultImageData);
     }
 
+    /**
+     * Canvas要素を再描画する
+     * @param imageData
+     */
     private repaintCanvas(imageData: ImageData): void {
         this.canvasElement.width = imageData.width;
         this.canvasElement.height = imageData.height;
