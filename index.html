@@ -10,11 +10,17 @@
 </head>
 <body>
 
+<div id="filtered-image-view"></div>
+<div id="image-filter-menu-view"></div>
 
+
+<div id="tmpContainer"></div>
 <!-- script -->
 <script>
     window.CanvasAppConfig = {
-        localImageLoaderView: document.body
+        filteredImageView: document.getElementById("filtered-image-view"),
+        imageFilterMenuView: document.getElementById("image-filter-menu-view"),
+        tmpContainer: document.getElementById("tmpContainer")
     };
 </script>
 <!-- shim -->

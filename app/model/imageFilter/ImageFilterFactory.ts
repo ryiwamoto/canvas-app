@@ -28,3 +28,5 @@ interface ImageFilterFactory {
      */
     create(config: ImageFilterConfig): ImageFilter;
 }
+
+export = ImageFilterFactory;

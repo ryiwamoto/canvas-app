@@ -1,2 +1,2 @@
-declare var template :Function;
-export = template;
+declare var localImageLoaderTemplate: (data?: any)=>string;
+export = localImageLoaderTemplate;

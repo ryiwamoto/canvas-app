@@ -3,7 +3,7 @@
 /**
  * 画像要素をImageDataに変換する
  */
-class ImgElemntToImageDataConverter {
+class ImgElementToImageDataConverter {
 
     constructor(private container: HTMLElement) {
     }
@@ -18,9 +18,9 @@ class ImgElemntToImageDataConverter {
             canvas.width = imgElement.width;
             canvas.height = imgElement.height;
             context.drawImage(imgElement, 0, 0);
-            resolve(context.getImageData(0, 0, imgElement.width, imgElement.height));
+            resolve(context.getImageData(0, 0, canvas.width, canvas.height));
         });
     }
 }
 
-export = ImgElemntToImageDataConverter;
+export = ImgElementToImageDataConverter;

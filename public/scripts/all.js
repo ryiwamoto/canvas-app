@@ -44,17 +44,21 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="./view/FilteredImageView"/>
-	///<reference path="./io/reference"/>
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="./io/reference"/>
+	///<reference path="./model/reference"/>
 	///<reference path="./view/reference"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, LocalImageLoaderView) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(2), __webpack_require__(7), __webpack_require__(3), __webpack_require__(4), __webpack_require__(5), __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, appConfig, ImageFilterFactoriesProviderImpl, LocalImageLoaderView, ImgElementToImageDataConverter, FilteredImage, FilteredImageView, ImageFilterMenuView) {
 	    window.addEventListener("load", function () {
-	        var config = CanvasAppConfig;
-	        var localImageLoaderView = new LocalImageLoaderView(config.localImageLoaderView);
-	        localImageLoaderView.open().then(function (img) {
-	            console.log(img);
-	        }, function (error) {
-	            console.log(error);
+	        new LocalImageLoaderView(appConfig.tmpContainer).open().then(function (imgElem) {
+	            var converter = new ImgElementToImageDataConverter(appConfig.tmpContainer);
+	            return converter.toImageData(imgElem);
+	        }).then(function (imageData) {
+	            var filteredImage = new FilteredImage("画像1", imageData);
+	            var filteredImageView = new FilteredImageView(filteredImage, appConfig.filteredImageView);
+	            filteredImageView.render();
+	            //画像処理フィルターリスト
+	            var imageFilterMenuView = new ImageFilterMenuView(appConfig.imageFilterMenuView, ImageFilterFactoriesProviderImpl.get(), filteredImage);
+	            imageFilterMenuView.render();
 	        });
 	    });
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -64,10 +68,227 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
+	    return CanvasAppConfig;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../model/reference.ts"/>
+	///<reference path="AutoBinalizeFilter.ts"/>
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageFilterFactoriesProvider, AutoBinalizeFilter) {
+	    //将来的にビルドプロセスで自動化する
+	    var provider = new ImageFilterFactoriesProvider().add(AutoBinalizeFilter);
+	    return provider;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../lib/es6-promise/es6-promise.d.ts"/>
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
+	    /**
+	     * 画像要素をImageDataに変換する
+	     */
+	    var ImgElementToImageDataConverter = (function () {
+	        function ImgElementToImageDataConverter(container) {
+	            this.container = container;
+	        }
+	        ImgElementToImageDataConverter.prototype.toImageData = function (imgElement) {
+	            var canvas = document.createElement("canvas");
+	            canvas.style.display = "none";
+	            this.container.appendChild(canvas);
+	            return new Promise(function (resolve, reject) {
+	                var context = canvas.getContext("2d");
+	                canvas.width = imgElement.width;
+	                canvas.height = imgElement.height;
+	                context.drawImage(imgElement, 0, 0);
+	                resolve(context.getImageData(0, 0, canvas.width, canvas.height));
+	            });
+	        };
+	        return ImgElementToImageDataConverter;
+	    })();
+	    return ImgElementToImageDataConverter;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="imageFilter/ImageFilter.ts"/>
+	///<reference path="FilteredImageEvents.ts"/>
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(9)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, FilteredImageEvents) {
+	    /**
+	     * 画像処理フィルターが適用された画像
+	     */
+	    var FilteredImage = (function () {
+	        /**
+	         * @param name 画像名
+	         * @param imageData 画像データ
+	         */
+	        function FilteredImage(name, imageData) {
+	            /**
+	             * 適用された画像処理フィルター
+	             * @type {Array}
+	             */
+	            this.appliedImageFilters = [];
+	            /**
+	             * イベントリスナーの配列
+	             */
+	            this.eventListeners = [];
+	            this.name = name;
+	            this.originalImageData = imageData;
+	            this.resultImageData = imageData;
+	        }
+	        /**
+	         * イベントリスナーを追加する
+	         * @param listener
+	         */
+	        FilteredImage.prototype.addEventListener = function (listener) {
+	            this.eventListeners.push(listener);
+	        };
+	        /**
+	         * 画像処理フィルターを適用する
+	         * @param filter 画像処理フィルター
+	         * @param index フィルターの適用位置。省略すると一番上に追加される
+	         */
+	        FilteredImage.prototype.addImageFilter = function (filter, index) {
+	            if (index === void 0) { index = this.appliedImageFilters.length; }
+	            if (index < 0 || index > this.appliedImageFilters.length) {
+	                throw new Error('given index is out of range: ' + index);
+	            }
+	            this.appliedImageFilters.splice(index, 0, filter);
+	            this.reApplyFilters();
+	            var event = new FilteredImageEvents.FilterAddedEvent(filter);
+	            this.eventListeners.forEach(function (listener) {
+	                listener.onFilterAdded(event);
+	            });
+	        };
+	        /**
+	         * フィルターを適用し直す
+	         * TODO: キャッシュ機構をつける
+	         */
+	        FilteredImage.prototype.reApplyFilters = function () {
+	            this.resultImageData = this.appliedImageFilters.reduce(function (imageData, filter) {
+	                return filter.process(imageData);
+	            }, this.originalImageData);
+	        };
+	        return FilteredImage;
+	    })();
+	    return FilteredImage;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../../model/reference.ts"/>
+	/// <amd-dependency path="./style.css" />
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(16)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
+	    /**
+	     * フィルター処理された画像のビュー
+	     */
+	    var FilteredImageView = (function () {
+	        /**
+	         * @param filteredImage フィルター処理された画像
+	         * @param container コンテナHTML要素
+	         */
+	        function FilteredImageView(filteredImage, container) {
+	            this.filteredImage = filteredImage;
+	            this.filteredImage.addEventListener(this);
+	            this.container = container;
+	            this.canvasElement = document.createElement("canvas");
+	            this.container.appendChild(this.createElement(this.canvasElement));
+	        }
+	        /**
+	         * HTML要素を生成する
+	         * TODO: テンプレート
+	         * @param canvas
+	         * @returns {any}
+	         */
+	        FilteredImageView.prototype.createElement = function (canvas) {
+	            var wrapper = document.createElement("div");
+	            wrapper.classList.add("filtered-image-view");
+	            wrapper.appendChild(canvas);
+	            return wrapper;
+	        };
+	        /**
+	         * 画像処理フィルターが追加されたときのコールバック
+	         * @param event
+	         */
+	        FilteredImageView.prototype.onFilterAdded = function (event) {
+	            this.render();
+	        };
+	        /**
+	         * Canvas要素を再描画する
+	         * @param imageData
+	         */
+	        FilteredImageView.prototype.render = function () {
+	            var imageData = this.filteredImage.resultImageData;
+	            this.canvasElement.width = imageData.width;
+	            this.canvasElement.height = imageData.height;
+	            this.canvasElement.getContext("2d").putImageData(imageData, 0, 0);
+	        };
+	        return FilteredImageView;
+	    })();
+	    return FilteredImageView;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../../model/reference.ts"/>
+	///<reference path="./image_filter_menu_view.d.ts"/>
+	///<reference path="../../lib/jquery/jquery.d.ts"/>
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, template) {
+	    /**
+	     * 画像処理フィルターの一覧を表示するビュー
+	     */
+	    var ImageFilterMenuView = (function () {
+	        /**
+	         * @param container コンテナHTML要素
+	         * @param factories メニューに表示する画像処理フィルターのファクトリの配列
+	         */
+	        function ImageFilterMenuView(container, factories, filteredImage) {
+	            this.factories = factories;
+	            this.filteredImage = filteredImage;
+	            this.container = $(container);
+	            this.container.on("click", ImageFilterMenuView.menuItemClassName, this.onItemClicked.bind(this));
+	        }
+	        ImageFilterMenuView.prototype.render = function () {
+	            this.container.html(template({
+	                items: this.factories
+	            }));
+	        };
+	        ImageFilterMenuView.prototype.onItemClicked = function (event) {
+	            var factory = this.factories[this.container.find(ImageFilterMenuView.menuItemClassName).index(event.currentTarget)];
+	            //TODO: 設定ビューを表示して、決定したときに生成するようにする
+	            this.filteredImage.addImageFilter(factory.create(null));
+	        };
+	        ImageFilterMenuView.menuItemClassName = ".js_image-filter-menu-item";
+	        return ImageFilterMenuView;
+	    })();
+	    return ImageFilterMenuView;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../../../lib/bootstrap/bootstrap.d.ts"/>
 	///<reference path="../../../io/reference.ts"/>
 	///<reference path="./local_image_loader.d.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(3), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, LocalImageLoader, template) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12), __webpack_require__(13)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, LocalImageLoader, template) {
 	    /**
 	     * ローカルの画像を読み込むビュー要素
 	     */
@@ -77,8 +298,6 @@
 	         */
 	        function LocalImageLoaderView(container) {
 	            this.container = $(container);
-	            this.dialog = this.createDialogElement();
-	            this.container.append(this.dialog);
 	        }
 	        /**
 	         * ダイアログ要素を生成する
@@ -96,19 +315,25 @@
 	         */
 	        LocalImageLoaderView.prototype.open = function () {
 	            var _this = this;
+	            this.dialog = this.createDialogElement();
 	            var fileInputContainer = this.dialog.find("#js_file-input-container");
-	            this.loader = new LocalImageLoader(fileInputContainer.get(0));
-	            var promise = this.loader.load();
-	            $(this.dialog).on("hidden.bs.modal", function () {
-	                _this.loader.cancel();
-	            });
-	            promise.then(function (result) {
-	                _this.dialog.modal("hide");
-	                return result;
-	            });
-	            console.log(this.dialog.html());
-	            this.dialog.modal("show");
+	            var loader = new LocalImageLoader(fileInputContainer.get(0));
+	            var promise = loader.load();
+	            promise.then(function (result) { return _this.cleanup(); });
+	            this.dialog.on("hidden.bs.modal", function () { return loader.cancel(); }).appendTo(this.container).modal("show");
 	            return promise;
+	        };
+	        /**
+	         * ダイアログが閉じるときの操作
+	         */
+	        LocalImageLoaderView.prototype.cleanup = function () {
+	            if (!this.dialog) {
+	                return;
+	            }
+	            this.dialog.modal("hide");
+	            this.dialog.off("hidden.bs.modal");
+	            //this.dialog.remove();
+	            this.dialog = null;
 	        };
 	        return LocalImageLoaderView;
 	    })();
@@ -117,20 +342,210 @@
 
 
 /***/ },
-/* 2 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-	  return "<div class=\"modal-dialog\">\n<div class=\"modal-content\">\n  <div class=\"modal-header\">\n    <button type=\"button\" class=\"close\" data-dismiss=\"modal\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span></button>\n    <h4 class=\"modal-title\">ローカル画像の読み込み</h4>\n  </div>\n  <div class=\"modal-body\">\n    <p id=\"js_file-input-container\"></p>\n  </div>\n</div><!-- /.modal-content -->\n</div><!-- /.modal-dialog -->\n";
-	  },"useData":true}); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../model/reference.ts"/>
+	///<reference path="../model/imageFilter/ImageFilterFactory.ts"/>
+	var __extends = this.__extends || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    __.prototype = b.prototype;
+	    d.prototype = new __();
+	};
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(14)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageFilter) {
+	    /**
+	     * 大津の二値化の画像フィルター
+	     */
+	    var AutoBinalizeFilter = (function (_super) {
+	        __extends(AutoBinalizeFilter, _super);
+	        function AutoBinalizeFilter(name) {
+	            _super.call(this, name);
+	        }
+	        /**
+	         * 処理関数
+	         * @param imageData
+	         * @returns {ImageData|{prototype: ImageData, new(): ImageData}}
+	         */
+	        AutoBinalizeFilter.prototype.process = function (imageData) {
+	            return this.binarizeByBorder(imageData, this.findBorder(this.calcHistogram(imageData)));
+	        };
+	        /**
+	         * しきい値を探す関数
+	         * @param {number[]} ヒストグラム
+	         */
+	        AutoBinalizeFilter.prototype.findBorder = function (histogram) {
+	            var currentMax = 0;
+	            var border = 1;
+	            for (var i = 1, histogramLength = histogram.length; i < histogramLength - 1; i++) {
+	                //グループに分けて画素数と平均を計算する
+	                var blackGroupAverage = 0, blackGroupSum = 0, whiteGroupAverage = 0, whiteGroupSum = 0, resultNum = 0, avgDiff = 0;
+	                for (var j = 0; j <= i; j++) {
+	                    blackGroupSum += histogram[j];
+	                }
+	                blackGroupAverage = blackGroupSum / i + 1;
+	                for (var k = i + 1; k <= i; k++) {
+	                    whiteGroupSum += histogram[k];
+	                }
+	                whiteGroupAverage = whiteGroupSum / histogramLength - i;
+	                avgDiff = blackGroupAverage - whiteGroupSum;
+	                resultNum = (i + 1) * (k - i) * (avgDiff * avgDiff);
+	                if (resultNum > currentMax) {
+	                    currentMax = resultNum;
+	                    border = i;
+	                }
+	            }
+	            return border;
+	        };
+	        /**
+	         * ヒストグラムを計算する関数
+	         * @param {ImageData} imageData canvasのimageData
+	         */
+	        AutoBinalizeFilter.prototype.calcHistogram = function (imageData) {
+	            var data = imageData.data;
+	            var ys = new Array(256);
+	            for (var i = 0; i < ys.length; i++) {
+	                ys[i] = 0;
+	            }
+	            for (var i = 0, _len = data.length; i < _len; i = i + 4) {
+	                // 輝度の値ごとのカウント
+	                ys[this.calcLuminance(data[i], data[i + 1], data[i + 2])]++;
+	            }
+	            return ys;
+	        };
+	        /**
+	         * しきい値を元に二値化する
+	         * @param {ImageData} imageData canvasのimageData
+	         * @param {number} borderLuminance しきい値(0~255)
+	         * @return {ImageData} 二値化後のimageData
+	         */
+	        AutoBinalizeFilter.prototype.binarizeByBorder = function (imageData, borderLuminance) {
+	            var data = imageData.data;
+	            for (var i = 0, _len2 = data.length; i < _len2; i = i + 4) {
+	                var y = ~~(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
+	                var binalized = y > borderLuminance ? 255 : 0;
+	                data[i] = binalized;
+	                data[i + 1] = binalized;
+	                data[i + 2] = binalized;
+	            }
+	            imageData.data = data;
+	            return imageData;
+	        };
+	        return AutoBinalizeFilter;
+	    })(ImageFilter);
+	    var AutoBinalizeFilterFactory = (function () {
+	        function AutoBinalizeFilterFactory() {
+	            /**
+	             * 生成する画像処理フィルターの名前
+	             */
+	            this.imageFilterName = "大津の二値化";
+	            /**
+	             * 生成する画像処理フィルターの説明文
+	             */
+	            this.imageFilterDescription = "大津の二値化法を使って自動で画像を二値化します";
+	        }
+	        /**
+	         * 画像処理フィルターを生成するために必要な設定項目を返す
+	         */
+	        AutoBinalizeFilterFactory.prototype.getImageFilterConfig = function () {
+	            return null;
+	        };
+	        /**
+	         * 画像処理フィルターを生成する
+	         * @param config 設定項目
+	         */
+	        AutoBinalizeFilterFactory.prototype.create = function (config) {
+	            return new AutoBinalizeFilter(this.imageFilterName);
+	        };
+	        return AutoBinalizeFilterFactory;
+	    })();
+	    var AutoBinalizeFilterFactoryImpl = new AutoBinalizeFilterFactory();
+	    return AutoBinalizeFilterFactoryImpl;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
 
 /***/ },
-/* 3 */
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="imageFilter/ImageFilter.ts"/>
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
+	    /**
+	     * 画像処理フィルターが追加されたときのイベント
+	     */
+	    var FilterAddedEvent = (function () {
+	        /**
+	         * @param addedFilter 追加された画像処理フィルター
+	         */
+	        function FilterAddedEvent(addedFilter) {
+	            this.addedFilter = addedFilter;
+	        }
+	        return FilterAddedEvent;
+	    })();
+	    exports.FilterAddedEvent = FilterAddedEvent;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(20)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"1":function(depth0,helpers,partials,data) {
+	  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+	  return "        <a class=\"js_image-filter-menu-item list-group-item\" href=\"#\">"
+	    + escapeExpression(((helper = (helper = helpers.imageFilterName || (depth0 != null ? depth0.imageFilterName : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"imageFilterName","hash":{},"data":data}) : helper)))
+	    + "</a>\n";
+	},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+	  var stack1, buffer = "<div class=\"image-filter-menu-view list-group\">\n";
+	  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.items : depth0), {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+	  if (stack1 != null) { buffer += stack1; }
+	  return buffer + "</div>";
+	},"useData":true}); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="./ImageFilterFactory.ts"/>
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
+	    /**
+	     * アプリケーションで使う画像処理フィルターファクトリのリストを提供するプロバイダー
+	     */
+	    var ImageFilterFactoriesProvider = (function () {
+	        function ImageFilterFactoriesProvider() {
+	            /**
+	             * 画像処理フィルター
+	             * @type {Array}
+	             */
+	            this.factories = [];
+	        }
+	        /**
+	         * 画像処理フィルターを登録する
+	         * @param imageFilterFactory
+	         */
+	        ImageFilterFactoriesProvider.prototype.add = function (imageFilterFactory) {
+	            this.factories.push(imageFilterFactory);
+	            return this;
+	        };
+	        /**
+	         * 画像処理フィルターを取得
+	         */
+	        ImageFilterFactoriesProvider.prototype.get = function () {
+	            return this.factories;
+	        };
+	        return ImageFilterFactoriesProvider;
+	    })();
+	    return ImageFilterFactoriesProvider;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../lib/es6-promise/es6-promise.d.ts"/>
 	/// <reference path="./ImageLoader.ts" />
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(4)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageLoader) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(15)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageLoader) {
 	    /**
 	     * ローカルにある画像を読み込むローダー
 	     */
@@ -207,7 +622,54 @@
 
 
 /***/ },
-/* 4 */
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(20)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+	  return "<div class=\"modal-dialog\">\n<div class=\"modal-content\">\n  <div class=\"modal-header\">\n    <button type=\"button\" class=\"close\" data-dismiss=\"modal\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span></button>\n    <h4 class=\"modal-title\">ローカル画像の読み込み</h4>\n  </div>\n  <div class=\"modal-body\">\n    <p id=\"js_file-input-container\"></p>\n  </div>\n</div><!-- /.modal-content -->\n</div><!-- /.modal-dialog -->\n";
+	  },"useData":true}); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
+	    /**
+	     * 画像フィルター
+	     */
+	    var ImageFilter = (function () {
+	        /**
+	         * @param name 画像処理フィルターの名前
+	         */
+	        function ImageFilter(name) {
+	            this.name = name;
+	        }
+	        /**
+	         * 適用する関数
+	         * @param imageData 画像データ
+	         * @returns {ImageData} 画像データ
+	         */
+	        ImageFilter.prototype.process = function (imageData) {
+	            return imageData;
+	        };
+	        /**
+	         * 画素の輝度値を計算する
+	         * @param r R
+	         * @param g G
+	         * @param b B
+	         * @returns {number} 輝度値
+	         */
+	        ImageFilter.prototype.calcLuminance = function (r, g, b) {
+	            return ~~(0.299 * r + 0.587 * g + 0.114 * b);
+	        };
+	        return ImageFilter;
+	    })();
+	    return ImageFilter;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/// <reference path="../lib/es6-promise/es6-promise.d.ts" />
@@ -226,6 +688,8 @@
 	        ImageLoader.prototype.load = function (imageURL) {
 	            return new Promise(function (resolve, reject) {
 	                var img = new Image();
+	                img.style.width = "auto";
+	                img.style.height = "auto";
 	                img.onload = function () {
 	                    resolve(img);
 	                };
@@ -241,7 +705,180 @@
 
 
 /***/ },
-/* 5 */
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(17);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(18)(content);
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		module.hot.accept("!!/home/gan/Documents/works/canvas-app/node_modules/css-loader/index.js!/home/gan/Documents/works/canvas-app/webpack-tmp/view/filteredImageView/style.css", function() {
+			var newContent = require("!!/home/gan/Documents/works/canvas-app/node_modules/css-loader/index.js!/home/gan/Documents/works/canvas-app/webpack-tmp/view/filteredImageView/style.css");
+			if(typeof newContent === 'string') newContent = [module.id, newContent, ''];
+			update(newContent);
+		});
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(19)();
+	exports.push([module.id, "/*\n.filtered-image-view {\n    background-color: white;\n    border: 1px solid #333;\n    display: inline-block;\n}\n*/\n", ""]);
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {};
+
+	module.exports = function(list) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+		var styles = listToStyles(list);
+		addStylesToDom(styles);
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+
+	function addStylesToDom(styles) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j]));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j]));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			// var sourceMap = item[3];
+			var part = {css: css, media: media/*, sourceMap: sourceMap*/};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+
+	function addStyle(obj) {
+		var styleElement = document.createElement("style");
+		var head = document.head || document.getElementsByTagName("head")[0];
+		styleElement.type = "text/css";
+		head.appendChild(styleElement);
+		applyToTag(styleElement, obj);
+		return function(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media /*&& newObj.sourceMap === obj.sourceMap*/)
+					return;
+				applyToTag(styleElement, obj = newObj);
+			} else {
+				head.removeChild(styleElement);
+			}
+		};
+	};
+
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+		// var sourceMap = obj.sourceMap;
+
+		// No browser support
+		// if(sourceMap && typeof btoa === "function") {
+			// try {
+				// css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(JSON.stringify(sourceMap)) + " */";
+			// } catch(e) {}
+		// }
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+
+	}
+
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = function() {
+		var list = [];
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+		return list;
+	}
+
+/***/ },
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!

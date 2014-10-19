@@ -10,11 +10,6 @@ import template = require("./local_image_loader");
  */
 class LocalImageLoaderView {
     /**
-     * イメージローダー
-     */
-    private loader: LocalImageLoader;
-
-    /**
      * コンテナHTML要素
      */
     private container: JQuery;
@@ -29,8 +24,6 @@ class LocalImageLoaderView {
      */
     constructor(container: HTMLElement) {
         this.container = $(container);
-        this.dialog = this.createDialogElement();
-        this.container.append(this.dialog);
     }
 
     /**
@@ -49,19 +42,32 @@ class LocalImageLoaderView {
      * ロカール画像読み込みダイアログを開く
      */
     open(): Promise<HTMLElement> {
+        this.dialog = this.createDialogElement();
         var fileInputContainer = this.dialog.find("#js_file-input-container");
-        this.loader = new LocalImageLoader(fileInputContainer.get(0));
-        var promise = this.loader.load();
-        $(this.dialog).on("hidden.bs.modal", ()=> {
-            this.loader.cancel()
-        });
-        promise.then((result)=> {
-            this.dialog.modal("hide");
-            return result;
-        });
-        console.log(this.dialog.html());
-        this.dialog.modal("show");
+
+        var loader = new LocalImageLoader(fileInputContainer.get(0));
+        var promise = loader.load();
+
+        promise.then((result)=> this.cleanup());
+        this.dialog
+            .on("hidden.bs.modal", ()=> loader.cancel())
+            .appendTo(this.container)
+            .modal("show");
+
         return promise;
+    }
+
+    /**
+     * ダイアログが閉じるときの操作
+     */
+    private cleanup() {
+        if (!this.dialog) {
+            return;
+        }
+        this.dialog.modal("hide");
+        this.dialog.off("hidden.bs.modal");
+        //this.dialog.remove();
+        this.dialog = null;
     }
 
 }

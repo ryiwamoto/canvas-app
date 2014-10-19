@@ -13,6 +13,8 @@ class ImageLoader {
     load(imageURL: string): Promise<HTMLImageElement> {
         return new Promise((resolve, reject)=> {
             var img = new Image();
+            img.style.width = "auto";
+            img.style.height = "auto";
             img.onload = ()=> {
                 resolve(img)
             };

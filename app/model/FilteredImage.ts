@@ -1,8 +1,8 @@
 ///<reference path="imageFilter/ImageFilter.ts"/>
 ///<reference path="FilteredImageEvents.ts"/>
 
-import ImageFilter = require("imageFilter/ImageFilter");
-import FilteredImageEvents = require("FilteredImageEvents");
+import ImageFilter = require("./imageFilter/ImageFilter");
+import FilteredImageEvents = require("./FilteredImageEvents");
 
 /**
  * 画像処理フィルターが適用された画像
@@ -32,7 +32,7 @@ class FilteredImage {
     /**
      * イベントリスナーの配列
      */
-    private eventListeners: FilteredImageEvents.FilteredImageEventListener[];
+    private eventListeners: FilteredImageEvents.FilteredImageEventListener[] = [];
 
     /**
      * @param name 画像名
@@ -48,7 +48,7 @@ class FilteredImage {
      * イベントリスナーを追加する
      * @param listener
      */
-    addEventListner(listener: FilteredImageEvents.FilteredImageEventListener): void {
+    addEventListener(listener: FilteredImageEvents.FilteredImageEventListener): void {
         this.eventListeners.push(listener);
     }
 
@@ -57,7 +57,7 @@ class FilteredImage {
      * @param filter 画像処理フィルター
      * @param index フィルターの適用位置。省略すると一番上に追加される
      */
-    addImageFilter(filter: ImageFilter, index = this.appliedImageFilters.length - 1): void {
+    addImageFilter(filter: ImageFilter, index = this.appliedImageFilters.length): void {
         if (index < 0 || index > this.appliedImageFilters.length) {
             throw new Error('given index is out of range: ' + index);
         }
