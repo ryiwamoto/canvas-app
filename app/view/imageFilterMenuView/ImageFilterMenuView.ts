@@ -32,6 +32,7 @@ class ImageFilterMenuView {
     }
 
     onItemClicked(event: JQueryEventObject): void {
+        event.preventDefault();
         var factory = this.factories[this.container.find(ImageFilterMenuView.menuItemClassName).index(<Element>event.currentTarget)];
         //TODO: 設定ビューを表示して、決定したときに生成するようにする
         this.filteredImage.addImageFilter(factory.create(null));

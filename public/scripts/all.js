@@ -47,18 +47,22 @@
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="./io/reference"/>
 	///<reference path="./model/reference"/>
 	///<reference path="./view/reference"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(2), __webpack_require__(7), __webpack_require__(3), __webpack_require__(4), __webpack_require__(5), __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, appConfig, ImageFilterFactoriesProviderImpl, LocalImageLoaderView, ImgElementToImageDataConverter, FilteredImage, FilteredImageView, ImageFilterMenuView) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(1), __webpack_require__(2), __webpack_require__(8), __webpack_require__(3), __webpack_require__(4), __webpack_require__(5), __webpack_require__(6), __webpack_require__(7)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, appConfig, ImageFilterFactoriesProviderImpl, LocalImageLoaderView, ImgElementToImageDataConverter, FilteredImage, FilteredImageView, ImageFilterMenuView, AppliedImageFilterListView) {
 	    window.addEventListener("load", function () {
 	        new LocalImageLoaderView(appConfig.tmpContainer).open().then(function (imgElem) {
 	            var converter = new ImgElementToImageDataConverter(appConfig.tmpContainer);
 	            return converter.toImageData(imgElem);
 	        }).then(function (imageData) {
 	            var filteredImage = new FilteredImage("画像1", imageData);
+	            //画像処理フィルターが適用されている画像
 	            var filteredImageView = new FilteredImageView(filteredImage, appConfig.filteredImageView);
 	            filteredImageView.render();
 	            //画像処理フィルターリスト
 	            var imageFilterMenuView = new ImageFilterMenuView(appConfig.imageFilterMenuView, ImageFilterFactoriesProviderImpl.get(), filteredImage);
 	            imageFilterMenuView.render();
+	            //適用されている画像フィルターのリスト
+	            var appliedImageFilterListView = new AppliedImageFilterListView(filteredImage, appConfig.appliedImageFilterView);
+	            appliedImageFilterListView.render();
 	        });
 	    });
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -79,7 +83,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../model/reference.ts"/>
 	///<reference path="AutoBinalizeFilter.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageFilterFactoriesProvider, AutoBinalizeFilter) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(13), __webpack_require__(9)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageFilterFactoriesProvider, AutoBinalizeFilter) {
 	    //将来的にビルドプロセスで自動化する
 	    var provider = new ImageFilterFactoriesProvider().add(AutoBinalizeFilter);
 	    return provider;
@@ -123,7 +127,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="imageFilter/ImageFilter.ts"/>
 	///<reference path="FilteredImageEvents.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(9)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, FilteredImageEvents) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, FilteredImageEvents) {
 	    /**
 	     * 画像処理フィルターが適用された画像
 	     */
@@ -191,7 +195,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../../model/reference.ts"/>
 	/// <amd-dependency path="./style.css" />
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(16)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(18)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
 	    /**
 	     * フィルター処理された画像のビュー
 	     */
@@ -249,7 +253,7 @@
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../../model/reference.ts"/>
 	///<reference path="./image_filter_menu_view.d.ts"/>
 	///<reference path="../../lib/jquery/jquery.d.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, template) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, template) {
 	    /**
 	     * 画像処理フィルターの一覧を表示するビュー
 	     */
@@ -270,6 +274,7 @@
 	            }));
 	        };
 	        ImageFilterMenuView.prototype.onItemClicked = function (event) {
+	            event.preventDefault();
 	            var factory = this.factories[this.container.find(ImageFilterMenuView.menuItemClassName).index(event.currentTarget)];
 	            //TODO: 設定ビューを表示して、決定したときに生成するようにする
 	            this.filteredImage.addImageFilter(factory.create(null));
@@ -285,10 +290,50 @@
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../../model/reference.ts"/>
+	///<reference path="./applied_image_filter_list_view.d.ts"/>
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, template) {
+	    /**
+	     * 適用された画像フィルターの一覧を表示するリスト
+	     */
+	    var AppliedImageFilterListView = (function () {
+	        /**
+	         * @param filteredImage 画像処理フィルターが適用されている画像
+	         * @param container コンテナHTML要素
+	         */
+	        function AppliedImageFilterListView(filteredImage, container) {
+	            this.filteredImage = filteredImage;
+	            this.container = container;
+	            this.filteredImage.addEventListener(this);
+	        }
+	        /**
+	         * 画像処理フィルターが追加されたときのコールバック
+	         * @param event
+	         */
+	        AppliedImageFilterListView.prototype.onFilterAdded = function (event) {
+	            console.log(this.filteredImage.appliedImageFilters);
+	            this.render();
+	        };
+	        /**
+	         * HTML要素に描画する
+	         */
+	        AppliedImageFilterListView.prototype.render = function () {
+	            this.container.innerHTML = template({ filters: this.filteredImage.appliedImageFilters });
+	        };
+	        return AppliedImageFilterListView;
+	    })();
+	    return AppliedImageFilterListView;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../../../lib/bootstrap/bootstrap.d.ts"/>
 	///<reference path="../../../io/reference.ts"/>
 	///<reference path="./local_image_loader.d.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12), __webpack_require__(13)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, LocalImageLoader, template) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(14), __webpack_require__(15)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, LocalImageLoader, template) {
 	    /**
 	     * ローカルの画像を読み込むビュー要素
 	     */
@@ -342,7 +387,7 @@
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../model/reference.ts"/>
@@ -353,7 +398,7 @@
 	    __.prototype = b.prototype;
 	    d.prototype = new __();
 	};
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(14)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageFilter) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(16)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageFilter) {
 	    /**
 	     * 大津の二値化の画像フィルター
 	     */
@@ -465,7 +510,7 @@
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="imageFilter/ImageFilter.ts"/>
@@ -487,10 +532,10 @@
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(20)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"1":function(depth0,helpers,partials,data) {
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(22)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"1":function(depth0,helpers,partials,data) {
 	  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
 	  return "        <a class=\"js_image-filter-menu-item list-group-item\" href=\"#\">"
 	    + escapeExpression(((helper = (helper = helpers.imageFilterName || (depth0 != null ? depth0.imageFilterName : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"imageFilterName","hash":{},"data":data}) : helper)))
@@ -503,7 +548,23 @@
 	},"useData":true}); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 11 */
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(22)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"1":function(depth0,helpers,partials,data) {
+	  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+	  return "        <li class=\"applied-image-filter-item list-group-item\">"
+	    + escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"name","hash":{},"data":data}) : helper)))
+	    + "</li>\n";
+	},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+	  var stack1, buffer = "<ul class=\"applied-image-filter-list\">\n";
+	  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.filters : depth0), {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+	  if (stack1 != null) { buffer += stack1; }
+	  return buffer + "</ul>\n";
+	},"useData":true}); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="./ImageFilterFactory.ts"/>
@@ -540,12 +601,12 @@
 
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../lib/es6-promise/es6-promise.d.ts"/>
 	/// <reference path="./ImageLoader.ts" />
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(15)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageLoader) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(17)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageLoader) {
 	    /**
 	     * ローカルにある画像を読み込むローダー
 	     */
@@ -622,15 +683,15 @@
 
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(20)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(22)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
 	  return "<div class=\"modal-dialog\">\n<div class=\"modal-content\">\n  <div class=\"modal-header\">\n    <button type=\"button\" class=\"close\" data-dismiss=\"modal\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span></button>\n    <h4 class=\"modal-title\">ローカル画像の読み込み</h4>\n  </div>\n  <div class=\"modal-body\">\n    <p id=\"js_file-input-container\"></p>\n  </div>\n</div><!-- /.modal-content -->\n</div><!-- /.modal-dialog -->\n";
 	  },"useData":true}); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 14 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
@@ -669,7 +730,7 @@
 
 
 /***/ },
-/* 15 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/// <reference path="../lib/es6-promise/es6-promise.d.ts" />
@@ -705,16 +766,16 @@
 
 
 /***/ },
-/* 16 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(17);
+	var content = __webpack_require__(19);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(18)(content);
+	var update = __webpack_require__(20)(content);
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -728,14 +789,14 @@
 	}
 
 /***/ },
-/* 17 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(19)();
+	exports = module.exports = __webpack_require__(21)();
 	exports.push([module.id, "/*\n.filtered-image-view {\n    background-color: white;\n    border: 1px solid #333;\n    display: inline-block;\n}\n*/\n", ""]);
 
 /***/ },
-/* 18 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -857,7 +918,7 @@
 
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function() {
@@ -878,7 +939,7 @@
 	}
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!

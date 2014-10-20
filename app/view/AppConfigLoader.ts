@@ -3,6 +3,7 @@
  */
 interface CanvasAppConfig {
     filteredImageView: HTMLElement;
+    appliedImageFilterView: HTMLElement;
     imageFilterMenuView: HTMLElement;
     tmpContainer: HTMLElement;
 }

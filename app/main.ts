@@ -11,6 +11,7 @@ import ImgElementToImageDataConverter = require("./io/ImgElementToImageDataConve
 import FilteredImage = require("./model/FilteredImage");
 import FilteredImageView = require("./view/filteredImageView/FilteredImageView");
 import ImageFilterMenuView = require("./view/imageFilterMenuView/ImageFilterMenuView");
+import AppliedImageFilterListView = require("./view/appliedImageFilterListView/AppliedImageFilterListView");
 
 window.addEventListener("load", ()=> {
     new LocalImageLoaderView(appConfig.tmpContainer).open().then((imgElem: HTMLImageElement)=> {
@@ -19,6 +20,7 @@ window.addEventListener("load", ()=> {
     }).then((imageData: ImageData)=> {
         var filteredImage = new FilteredImage("画像1", imageData);
 
+        //画像処理フィルターが適用されている画像
         var filteredImageView = new FilteredImageView(filteredImage, appConfig.filteredImageView);
         filteredImageView.render();
 
@@ -29,5 +31,9 @@ window.addEventListener("load", ()=> {
             filteredImage
         );
         imageFilterMenuView.render();
+
+        //適用されている画像フィルターのリスト
+        var appliedImageFilterListView = new AppliedImageFilterListView(filteredImage, appConfig.appliedImageFilterView);
+        appliedImageFilterListView.render();
     });
 });
