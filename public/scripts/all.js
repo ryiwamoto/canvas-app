@@ -83,9 +83,9 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../model/reference.ts"/>
 	///<reference path="AutoBinalizeFilter.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(13), __webpack_require__(9)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageFilterFactoriesProvider, AutoBinalizeFilter) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(14), __webpack_require__(9), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageFilterFactoriesProvider, AutoBinalizeFilter, DetherBinalizationFilter) {
 	    //将来的にビルドプロセスで自動化する
-	    var provider = new ImageFilterFactoriesProvider().add(AutoBinalizeFilter);
+	    var provider = new ImageFilterFactoriesProvider().add(AutoBinalizeFilter).add(DetherBinalizationFilter);
 	    return provider;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -127,7 +127,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="imageFilter/ImageFilter.ts"/>
 	///<reference path="FilteredImageEvents.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, FilteredImageEvents) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, FilteredImageEvents) {
 	    /**
 	     * 画像処理フィルターが適用された画像
 	     */
@@ -195,7 +195,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../../model/reference.ts"/>
 	/// <amd-dependency path="./style.css" />
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(18)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(19)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
 	    /**
 	     * フィルター処理された画像のビュー
 	     */
@@ -253,7 +253,7 @@
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../../model/reference.ts"/>
 	///<reference path="./image_filter_menu_view.d.ts"/>
 	///<reference path="../../lib/jquery/jquery.d.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, template) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, template) {
 	    /**
 	     * 画像処理フィルターの一覧を表示するビュー
 	     */
@@ -292,7 +292,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../../model/reference.ts"/>
 	///<reference path="./applied_image_filter_list_view.d.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, template) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(13)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, template) {
 	    /**
 	     * 適用された画像フィルターの一覧を表示するリスト
 	     */
@@ -333,7 +333,7 @@
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../../../lib/bootstrap/bootstrap.d.ts"/>
 	///<reference path="../../../io/reference.ts"/>
 	///<reference path="./local_image_loader.d.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(14), __webpack_require__(15)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, LocalImageLoader, template) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(15), __webpack_require__(16)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, LocalImageLoader, template) {
 	    /**
 	     * ローカルの画像を読み込むビュー要素
 	     */
@@ -398,7 +398,7 @@
 	    __.prototype = b.prototype;
 	    d.prototype = new __();
 	};
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(16)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageFilter) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(17)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageFilter) {
 	    /**
 	     * 大津の二値化の画像フィルター
 	     */
@@ -513,6 +513,136 @@
 /* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../model/reference.ts"/>
+	///<reference path="../model/imageFilter/ImageFilterFactory.ts"/>
+	var __extends = this.__extends || function (d, b) {
+	    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+	    function __() { this.constructor = d; }
+	    __.prototype = b.prototype;
+	    d.prototype = new __();
+	};
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(17)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageFilter) {
+	    /**
+	     * ディザパターンを使ってハーフトーン処理を行う画像処理フィルター
+	     */
+	    var DetherBinalizationFilter = (function (_super) {
+	        __extends(DetherBinalizationFilter, _super);
+	        /**
+	         * @param name 画像フィルター名
+	         */
+	        function DetherBinalizationFilter(name) {
+	            _super.call(this, name);
+	        }
+	        /**
+	         * ディザパターンを使ってハーフトーン処理を行う
+	         * @param imageData
+	         * @returns {ImageData|{prototype: ImageData, new(): ImageData}}
+	         */
+	        DetherBinalizationFilter.prototype.process = function (imageData) {
+	            //輝度の配列に変換
+	            var luminanceLines = this.getLuminances(imageData);
+	            //ディザパターンに置き換え
+	            return this.createDetherPattern(luminanceLines, imageData);
+	        };
+	        /**
+	         * 輝度値情報の配列を返す
+	         * @param imageData
+	         * @returns {Array}
+	         */
+	        DetherBinalizationFilter.prototype.getLuminances = function (imageData) {
+	            var data = imageData.data;
+	            var pixels = [];
+	            for (var i = 0, _len = data.length; i < _len; i = i + 4) {
+	                pixels.push(this.calcLuminance(data[i], data[i + 1], data[i + 2]));
+	            }
+	            return pixels;
+	        };
+	        /**
+	         * 輝度値の情報に基づいてディザパターンで処理した画像データを返す
+	         * @param pixels
+	         * @param imageData
+	         * @returns {ImageData}
+	         */
+	        DetherBinalizationFilter.prototype.createDetherPattern = function (pixels, imageData) {
+	            var width = imageData.width;
+	            var height = imageData.height;
+	            var data = imageData.data;
+	            for (var i = 0, _len = pixels.length; i < _len; i++) {
+	                var pixel = pixels[i];
+	                //画像の左上ピクセルを0,0としたx,y座標を求める
+	                var x = i % width;
+	                var y = ~~(i / width);
+	                //4x4のブロックのどこに入るかを計算
+	                var xInBlock = x % 4;
+	                var yInBlock = y % 4;
+	                //ディザパターンと照合する
+	                var binalized = (pixel < DetherBinalizationFilter.CALCURATED_BAYER_DETHER_PATTERN[xInBlock][yInBlock]) ? 0 : 255;
+	                var dataIndex = i * 4;
+	                data[dataIndex] = binalized; //R
+	                data[dataIndex + 1] = binalized; //G
+	                data[dataIndex + 2] = binalized; //B
+	                data[dataIndex + 3] = 255; //A
+	            }
+	            return imageData;
+	        };
+	        /**
+	         * Bayerのディザパターン
+	         */
+	        DetherBinalizationFilter.BAYER_DETHER_PATTERN = [
+	            [0, 8, 2, 10],
+	            [12, 4, 14, 6],
+	            [3, 11, 1, 9],
+	            [15, 7, 13, 5]
+	        ];
+	        /**
+	         * Bayerのディザパターンの各値nを n * 16 + 8したもの
+	         */
+	        DetherBinalizationFilter.CALCURATED_BAYER_DETHER_PATTERN = [
+	            [8, 136, 40, 168],
+	            [200, 72, 232, 104],
+	            [56, 184, 24, 152],
+	            [248, 120, 216, 88]
+	        ];
+	        return DetherBinalizationFilter;
+	    })(ImageFilter);
+	    /**
+	     * ディザパターンを使ってハーフトーン処理を行う画像処理フィルターのファクトリ
+	     */
+	    var DetherBinalizationFilterFactory = (function () {
+	        function DetherBinalizationFilterFactory() {
+	            /**
+	             * 生成する画像処理フィルターの名前
+	             */
+	            this.imageFilterName = "二値化（ディザ）";
+	            /**
+	             * 生成する画像処理フィルターの説明文
+	             */
+	            this.imageFilterDescription = "ディザパターンを使ってハーフトーン処理を行う";
+	        }
+	        /**
+	         * 画像処理フィルターを生成するために必要な設定項目を返す
+	         */
+	        DetherBinalizationFilterFactory.prototype.getImageFilterConfig = function () {
+	            return null;
+	        };
+	        /**
+	         * 画像処理フィルターを生成する
+	         * @param config 設定項目
+	         */
+	        DetherBinalizationFilterFactory.prototype.create = function (config) {
+	            return new DetherBinalizationFilter(this.imageFilterName);
+	        };
+	        return DetherBinalizationFilterFactory;
+	    })();
+	    var DetherBinalizationFilterFactoryImpl = new DetherBinalizationFilterFactory();
+	    return DetherBinalizationFilterFactoryImpl;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="imageFilter/ImageFilter.ts"/>
 	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
 	    /**
@@ -532,10 +662,10 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(22)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"1":function(depth0,helpers,partials,data) {
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(23)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"1":function(depth0,helpers,partials,data) {
 	  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
 	  return "        <a class=\"js_image-filter-menu-item list-group-item\" href=\"#\">"
 	    + escapeExpression(((helper = (helper = helpers.imageFilterName || (depth0 != null ? depth0.imageFilterName : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"imageFilterName","hash":{},"data":data}) : helper)))
@@ -548,10 +678,10 @@
 	},"useData":true}); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(22)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"1":function(depth0,helpers,partials,data) {
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(23)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"1":function(depth0,helpers,partials,data) {
 	  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
 	  return "        <li class=\"applied-image-filter-item list-group-item\">"
 	    + escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"name","hash":{},"data":data}) : helper)))
@@ -564,7 +694,7 @@
 	},"useData":true}); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="./ImageFilterFactory.ts"/>
@@ -601,12 +731,12 @@
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../lib/es6-promise/es6-promise.d.ts"/>
 	/// <reference path="./ImageLoader.ts" />
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(17)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageLoader) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(18)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageLoader) {
 	    /**
 	     * ローカルにある画像を読み込むローダー
 	     */
@@ -683,15 +813,15 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(22)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(23)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
 	  return "<div class=\"modal-dialog\">\n<div class=\"modal-content\">\n  <div class=\"modal-header\">\n    <button type=\"button\" class=\"close\" data-dismiss=\"modal\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span></button>\n    <h4 class=\"modal-title\">ローカル画像の読み込み</h4>\n  </div>\n  <div class=\"modal-body\">\n    <p id=\"js_file-input-container\"></p>\n  </div>\n</div><!-- /.modal-content -->\n</div><!-- /.modal-dialog -->\n";
 	  },"useData":true}); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
@@ -730,7 +860,7 @@
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/// <reference path="../lib/es6-promise/es6-promise.d.ts" />
@@ -766,16 +896,16 @@
 
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(19);
+	var content = __webpack_require__(20);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(20)(content);
+	var update = __webpack_require__(21)(content);
 	// Hot Module Replacement
 	if(false) {
 		// When the styles change, update the <style> tags
@@ -789,14 +919,14 @@
 	}
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(21)();
+	exports = module.exports = __webpack_require__(22)();
 	exports.push([module.id, "/*\n.filtered-image-view {\n    background-color: white;\n    border: 1px solid #333;\n    display: inline-block;\n}\n*/\n", ""]);
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -918,7 +1048,7 @@
 
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = function() {
@@ -939,7 +1069,7 @@
 	}
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
