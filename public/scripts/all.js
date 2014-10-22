@@ -82,10 +82,10 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../model/reference.ts"/>
-	///<reference path="AutoBinalizeFilter.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(14), __webpack_require__(9), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageFilterFactoriesProvider, AutoBinalizeFilter, DetherBinalizationFilter) {
+	///<reference path="AutoBinalizationFilter.ts"/>
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(16), __webpack_require__(12), __webpack_require__(13)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, ImageFilterFactoriesProvider, AutoBinalizationFilter, DetherBinalizationFilter) {
 	    //将来的にビルドプロセスで自動化する
-	    var provider = new ImageFilterFactoriesProvider().add(AutoBinalizeFilter).add(DetherBinalizationFilter);
+	    var provider = new ImageFilterFactoriesProvider().add(AutoBinalizationFilter).add(DetherBinalizationFilter);
 	    return provider;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
@@ -127,7 +127,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="imageFilter/ImageFilter.ts"/>
 	///<reference path="FilteredImageEvents.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, FilteredImageEvents) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(9)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, FilteredImageEvents) {
 	    /**
 	     * 画像処理フィルターが適用された画像
 	     */
@@ -253,7 +253,7 @@
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../../model/reference.ts"/>
 	///<reference path="./image_filter_menu_view.d.ts"/>
 	///<reference path="../../lib/jquery/jquery.d.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(12)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, template) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(10)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, template) {
 	    /**
 	     * 画像処理フィルターの一覧を表示するビュー
 	     */
@@ -292,7 +292,7 @@
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../../model/reference.ts"/>
 	///<reference path="./applied_image_filter_list_view.d.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(13)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, template) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(11)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, template) {
 	    /**
 	     * 適用された画像フィルターの一覧を表示するリスト
 	     */
@@ -333,7 +333,7 @@
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../../../lib/bootstrap/bootstrap.d.ts"/>
 	///<reference path="../../../io/reference.ts"/>
 	///<reference path="./local_image_loader.d.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(15), __webpack_require__(16)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, LocalImageLoader, template) {
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports, __webpack_require__(14), __webpack_require__(15)], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports, LocalImageLoader, template) {
 	    /**
 	     * ローカルの画像を読み込むビュー要素
 	     */
@@ -390,6 +390,60 @@
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="imageFilter/ImageFilter.ts"/>
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
+	    /**
+	     * 画像処理フィルターが追加されたときのイベント
+	     */
+	    var FilterAddedEvent = (function () {
+	        /**
+	         * @param addedFilter 追加された画像処理フィルター
+	         */
+	        function FilterAddedEvent(addedFilter) {
+	            this.addedFilter = addedFilter;
+	        }
+	        return FilterAddedEvent;
+	    })();
+	    exports.FilterAddedEvent = FilterAddedEvent;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(23)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"1":function(depth0,helpers,partials,data) {
+	  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+	  return "        <a class=\"js_image-filter-menu-item list-group-item\" href=\"#\">"
+	    + escapeExpression(((helper = (helper = helpers.imageFilterName || (depth0 != null ? depth0.imageFilterName : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"imageFilterName","hash":{},"data":data}) : helper)))
+	    + "</a>\n";
+	},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+	  var stack1, buffer = "<div class=\"image-filter-menu-view list-group\">\n";
+	  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.items : depth0), {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+	  if (stack1 != null) { buffer += stack1; }
+	  return buffer + "</div>";
+	},"useData":true}); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(23)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"1":function(depth0,helpers,partials,data) {
+	  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+	  return "        <li class=\"applied-image-filter-item list-group-item\">"
+	    + escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"name","hash":{},"data":data}) : helper)))
+	    + "</li>\n";
+	},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+	  var stack1, buffer = "<ul class=\"applied-image-filter-list\">\n";
+	  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.filters : depth0), {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
+	  if (stack1 != null) { buffer += stack1; }
+	  return buffer + "</ul>\n";
+	},"useData":true}); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../model/reference.ts"/>
 	///<reference path="../model/imageFilter/ImageFilterFactory.ts"/>
 	var __extends = this.__extends || function (d, b) {
@@ -402,9 +456,9 @@
 	    /**
 	     * 大津の二値化の画像フィルター
 	     */
-	    var AutoBinalizeFilter = (function (_super) {
-	        __extends(AutoBinalizeFilter, _super);
-	        function AutoBinalizeFilter(name) {
+	    var AutoBinalizationFilter = (function (_super) {
+	        __extends(AutoBinalizationFilter, _super);
+	        function AutoBinalizationFilter(name) {
 	            _super.call(this, name);
 	        }
 	        /**
@@ -412,14 +466,14 @@
 	         * @param imageData
 	         * @returns {ImageData|{prototype: ImageData, new(): ImageData}}
 	         */
-	        AutoBinalizeFilter.prototype.process = function (imageData) {
+	        AutoBinalizationFilter.prototype.process = function (imageData) {
 	            return this.binarizeByBorder(imageData, this.findBorder(this.calcHistogram(imageData)));
 	        };
 	        /**
 	         * しきい値を探す関数
 	         * @param {number[]} ヒストグラム
 	         */
-	        AutoBinalizeFilter.prototype.findBorder = function (histogram) {
+	        AutoBinalizationFilter.prototype.findBorder = function (histogram) {
 	            var currentMax = 0;
 	            var border = 1;
 	            for (var i = 1, histogramLength = histogram.length; i < histogramLength - 1; i++) {
@@ -446,7 +500,7 @@
 	         * ヒストグラムを計算する関数
 	         * @param {ImageData} imageData canvasのimageData
 	         */
-	        AutoBinalizeFilter.prototype.calcHistogram = function (imageData) {
+	        AutoBinalizationFilter.prototype.calcHistogram = function (imageData) {
 	            var data = imageData.data;
 	            var ys = new Array(256);
 	            for (var i = 0; i < ys.length; i++) {
@@ -464,7 +518,7 @@
 	         * @param {number} borderLuminance しきい値(0~255)
 	         * @return {ImageData} 二値化後のimageData
 	         */
-	        AutoBinalizeFilter.prototype.binarizeByBorder = function (imageData, borderLuminance) {
+	        AutoBinalizationFilter.prototype.binarizeByBorder = function (imageData, borderLuminance) {
 	            var data = imageData.data;
 	            for (var i = 0, _len2 = data.length; i < _len2; i = i + 4) {
 	                var y = ~~(0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]);
@@ -476,10 +530,10 @@
 	            imageData.data = data;
 	            return imageData;
 	        };
-	        return AutoBinalizeFilter;
+	        return AutoBinalizationFilter;
 	    })(ImageFilter);
-	    var AutoBinalizeFilterFactory = (function () {
-	        function AutoBinalizeFilterFactory() {
+	    var AutoBinalizationFilterFactory = (function () {
+	        function AutoBinalizationFilterFactory() {
 	            /**
 	             * 生成する画像処理フィルターの名前
 	             */
@@ -492,25 +546,25 @@
 	        /**
 	         * 画像処理フィルターを生成するために必要な設定項目を返す
 	         */
-	        AutoBinalizeFilterFactory.prototype.getImageFilterConfig = function () {
+	        AutoBinalizationFilterFactory.prototype.getImageFilterConfig = function () {
 	            return null;
 	        };
 	        /**
 	         * 画像処理フィルターを生成する
 	         * @param config 設定項目
 	         */
-	        AutoBinalizeFilterFactory.prototype.create = function (config) {
-	            return new AutoBinalizeFilter(this.imageFilterName);
+	        AutoBinalizationFilterFactory.prototype.create = function (config) {
+	            return new AutoBinalizationFilter(this.imageFilterName);
 	        };
-	        return AutoBinalizeFilterFactory;
+	        return AutoBinalizationFilterFactory;
 	    })();
-	    var AutoBinalizeFilterFactoryImpl = new AutoBinalizeFilterFactory();
-	    return AutoBinalizeFilterFactoryImpl;
+	    var AutoBinalizationFilterFactoryImpl = new AutoBinalizationFilterFactory();
+	    return AutoBinalizationFilterFactoryImpl;
 	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 
 
 /***/ },
-/* 10 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../model/reference.ts"/>
@@ -640,98 +694,7 @@
 
 
 /***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="imageFilter/ImageFilter.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
-	    /**
-	     * 画像処理フィルターが追加されたときのイベント
-	     */
-	    var FilterAddedEvent = (function () {
-	        /**
-	         * @param addedFilter 追加された画像処理フィルター
-	         */
-	        function FilterAddedEvent(addedFilter) {
-	            this.addedFilter = addedFilter;
-	        }
-	        return FilterAddedEvent;
-	    })();
-	    exports.FilterAddedEvent = FilterAddedEvent;
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(23)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"1":function(depth0,helpers,partials,data) {
-	  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-	  return "        <a class=\"js_image-filter-menu-item list-group-item\" href=\"#\">"
-	    + escapeExpression(((helper = (helper = helpers.imageFilterName || (depth0 != null ? depth0.imageFilterName : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"imageFilterName","hash":{},"data":data}) : helper)))
-	    + "</a>\n";
-	},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-	  var stack1, buffer = "<div class=\"image-filter-menu-view list-group\">\n";
-	  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.items : depth0), {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
-	  if (stack1 != null) { buffer += stack1; }
-	  return buffer + "</div>";
-	},"useData":true}); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(23)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"1":function(depth0,helpers,partials,data) {
-	  var helper, functionType="function", helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
-	  return "        <li class=\"applied-image-filter-item list-group-item\">"
-	    + escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helperMissing),(typeof helper === functionType ? helper.call(depth0, {"name":"name","hash":{},"data":data}) : helper)))
-	    + "</li>\n";
-	},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-	  var stack1, buffer = "<ul class=\"applied-image-filter-list\">\n";
-	  stack1 = helpers.each.call(depth0, (depth0 != null ? depth0.filters : depth0), {"name":"each","hash":{},"fn":this.program(1, data),"inverse":this.noop,"data":data});
-	  if (stack1 != null) { buffer += stack1; }
-	  return buffer + "</ul>\n";
-	},"useData":true}); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-/***/ },
 /* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="./ImageFilterFactory.ts"/>
-	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
-	    /**
-	     * アプリケーションで使う画像処理フィルターファクトリのリストを提供するプロバイダー
-	     */
-	    var ImageFilterFactoriesProvider = (function () {
-	        function ImageFilterFactoriesProvider() {
-	            /**
-	             * 画像処理フィルター
-	             * @type {Array}
-	             */
-	            this.factories = [];
-	        }
-	        /**
-	         * 画像処理フィルターを登録する
-	         * @param imageFilterFactory
-	         */
-	        ImageFilterFactoriesProvider.prototype.add = function (imageFilterFactory) {
-	            this.factories.push(imageFilterFactory);
-	            return this;
-	        };
-	        /**
-	         * 画像処理フィルターを取得
-	         */
-	        ImageFilterFactoriesProvider.prototype.get = function () {
-	            return this.factories;
-	        };
-	        return ImageFilterFactoriesProvider;
-	    })();
-	    return ImageFilterFactoriesProvider;
-	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-
-
-/***/ },
-/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="../lib/es6-promise/es6-promise.d.ts"/>
@@ -813,12 +776,49 @@
 
 
 /***/ },
-/* 16 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(23)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Handlebars) { return Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
 	  return "<div class=\"modal-dialog\">\n<div class=\"modal-content\">\n  <div class=\"modal-header\">\n    <button type=\"button\" class=\"close\" data-dismiss=\"modal\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span></button>\n    <h4 class=\"modal-title\">ローカル画像の読み込み</h4>\n  </div>\n  <div class=\"modal-body\">\n    <p id=\"js_file-input-container\"></p>\n  </div>\n</div><!-- /.modal-content -->\n</div><!-- /.modal-dialog -->\n";
 	  },"useData":true}); }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;///<reference path="./ImageFilterFactory.ts"/>
+	!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__, exports], __WEBPACK_AMD_DEFINE_RESULT__ = function (require, exports) {
+	    /**
+	     * アプリケーションで使う画像処理フィルターファクトリのリストを提供するプロバイダー
+	     */
+	    var ImageFilterFactoriesProvider = (function () {
+	        function ImageFilterFactoriesProvider() {
+	            /**
+	             * 画像処理フィルター
+	             * @type {Array}
+	             */
+	            this.factories = [];
+	        }
+	        /**
+	         * 画像処理フィルターを登録する
+	         * @param imageFilterFactory
+	         */
+	        ImageFilterFactoriesProvider.prototype.add = function (imageFilterFactory) {
+	            this.factories.push(imageFilterFactory);
+	            return this;
+	        };
+	        /**
+	         * 画像処理フィルターを取得
+	         */
+	        ImageFilterFactoriesProvider.prototype.get = function () {
+	            return this.factories;
+	        };
+	        return ImageFilterFactoriesProvider;
+	    })();
+	    return ImageFilterFactoriesProvider;
+	}.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+
 
 /***/ },
 /* 17 */

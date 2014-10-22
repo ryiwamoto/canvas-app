@@ -1,15 +1,15 @@
 ///<reference path="../model/reference.ts"/>
-///<reference path="AutoBinalizeFilter.ts"/>
+///<reference path="AutoBinalizationFilter.ts"/>
 
 import ImageFilterFactoriesProvider = require("../model/imageFilter/ImageFilterFactoriesProvider");
 
-import AutoBinalizeFilter = require("./AutoBinalizeFilter");
+import AutoBinalizationFilter = require("./AutoBinalizationFilter");
 import DetherBinalizationFilter = require("./DetherBinalizationFilter");
 
 //将来的にビルドプロセスで自動化する
 var provider =
     new ImageFilterFactoriesProvider()
-        .add(AutoBinalizeFilter)
+        .add(AutoBinalizationFilter)
         .add(DetherBinalizationFilter);
 
 export = provider;

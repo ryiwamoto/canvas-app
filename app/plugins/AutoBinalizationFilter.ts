@@ -7,7 +7,7 @@ import ImageFilterFactory = require("../model/imageFilter/ImageFilterFactory");
 /**
  * 大津の二値化の画像フィルター
  */
-class AutoBinalizeFilter extends ImageFilter {
+class AutoBinalizationFilter extends ImageFilter {
 
     constructor(name: string){
         super(name);
@@ -94,7 +94,7 @@ class AutoBinalizeFilter extends ImageFilter {
     }
 }
 
-class AutoBinalizeFilterFactory implements ImageFilterFactory {
+class AutoBinalizationFilterFactory implements ImageFilterFactory {
     /**
      * 生成する画像処理フィルターの名前
      */
@@ -117,9 +117,9 @@ class AutoBinalizeFilterFactory implements ImageFilterFactory {
      * @param config 設定項目
      */
     create(config: ImageFilterConfig): ImageFilter {
-        return new AutoBinalizeFilter(this.imageFilterName);
+        return new AutoBinalizationFilter(this.imageFilterName);
     }
 }
 
-var AutoBinalizeFilterFactoryImpl = new AutoBinalizeFilterFactory();
-export = AutoBinalizeFilterFactoryImpl;
+var AutoBinalizationFilterFactoryImpl = new AutoBinalizationFilterFactory();
+export = AutoBinalizationFilterFactoryImpl;
