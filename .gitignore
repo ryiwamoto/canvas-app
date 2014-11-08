@@ -68,3 +68,4 @@ webpack-tmp
 .tmp
 
 typings
+public/scripts/all.js

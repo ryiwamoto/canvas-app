@@ -19,6 +19,11 @@ class FilteredImageView implements FilteredImageEvents.FilteredImageEventListene
     private canvasElement: HTMLCanvasElement;
 
     /**
+     * 表示用のImage要素
+     */
+    private imageElement: HTMLImageElement;
+
+    /**
      * ViewのコンテナHTML要素
      */
     private container: HTMLElement;
@@ -32,6 +37,7 @@ class FilteredImageView implements FilteredImageEvents.FilteredImageEventListene
         this.filteredImage.addEventListener(this);
         this.container = container;
         this.canvasElement = document.createElement("canvas");
+        this.imageElement = document.createElement("img");
         this.container.appendChild(this.createElement(this.canvasElement));
     }
 
@@ -41,10 +47,12 @@ class FilteredImageView implements FilteredImageEvents.FilteredImageEventListene
      * @param canvas
      * @returns {any}
      */
-    private createElement(canvas: HTMLCanvasElement): HTMLElement{
+    private createElement(canvas: HTMLCanvasElement): HTMLElement {
         var wrapper = document.createElement("div");
+        this.imageElement.style.width = "100%";
+        this.imageElement.style.height = "100%";
         wrapper.classList.add("filtered-image-view");
-        wrapper.appendChild(canvas);
+        wrapper.appendChild(this.imageElement);
         return wrapper;
     }
 
@@ -65,6 +73,7 @@ class FilteredImageView implements FilteredImageEvents.FilteredImageEventListene
         this.canvasElement.width = imageData.width;
         this.canvasElement.height = imageData.height;
         this.canvasElement.getContext("2d").putImageData(imageData, 0, 0);
+        this.imageElement.src = this.canvasElement.toDataURL();
     }
 }
 

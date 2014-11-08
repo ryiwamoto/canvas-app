@@ -19,6 +19,7 @@ class ImageFilterMenuView {
     /**
      * @param container コンテナHTML要素
      * @param factories メニューに表示する画像処理フィルターのファクトリの配列
+     * @param filteredImage 処理後の画像
      */
     constructor(container: HTMLElement, private factories: ImageFilterFactory[], private filteredImage: FilteredImage) {
         this.container = $(container);
