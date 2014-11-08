@@ -15,6 +15,7 @@ export interface FilteredImageEventListener {
 export class FilterAddedEvent{
     /**
      * @param addedFilter 追加された画像処理フィルター
+     * @param resultImage フィルター後の画像
      */
     constructor(public addedFilter: ImageFilter){
     }

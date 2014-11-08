@@ -28,7 +28,6 @@ class ToneCurveFilter extends ImageFilter {
             data[i + 1] = newRgb[1];
             data[i + 2] = newRgb[2];
         }
-        console.log(imageData);
         imageData.data = data;
         return imageData;
     }
@@ -43,35 +42,4 @@ class ToneCurveFilter extends ImageFilter {
     }
 }
 
-/**
- * ディザパターンを使ってハーフトーン処理を行う画像処理フィルターのファクトリ
- */
-class ToneCurveFilterFactory implements ImageFilterFactory {
-    /**
-     * 生成する画像処理フィルターの名前
-     */
-    imageFilterName: string = "トーンカーブ";
-
-    /**
-     * 生成する画像処理フィルターの説明文
-     */
-    imageFilterDescription: string = "トーンカーブ";
-
-    /**
-     * 画像処理フィルターを生成するために必要な設定項目を返す
-     */
-    getImageFilterConfig(): ImageFilterConfig {
-        return null;
-    }
-
-    /**
-     * 画像処理フィルターを生成する
-     * @param config 設定項目
-     */
-    create(config: ImageFilterConfig): ImageFilter {
-        return new ToneCurveFilter(this.imageFilterName);
-    }
-}
-
-var ToneCurveFilterFactoryImpl = new ToneCurveFilterFactory();
-export = ToneCurveFilterFactoryImpl;
+export = ToneCurveFilter;

@@ -24,7 +24,6 @@ class AppliedImageFilterListView implements FilteredImageEvents.FilteredImageEve
      * @param event
      */
     onFilterAdded(event: FilteredImageEvents.FilterAddedEvent): void {
-        console.log(this.filteredImage.appliedImageFilters);
         this.render();
     }
 
@@ -33,7 +32,6 @@ class AppliedImageFilterListView implements FilteredImageEvents.FilteredImageEve
      */
     render(): void {
         this.container.innerHTML = template({filters: this.filteredImage.appliedImageFilters});
-
     }
 }
 

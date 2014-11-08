@@ -64,6 +64,7 @@ class FilteredImage {
         this.appliedImageFilters.splice(index, 0, filter);
         this.reApplyFilters();
 
+        //fire events
         var event = new FilteredImageEvents.FilterAddedEvent(filter);
         this.eventListeners.forEach((listener: FilteredImageEvents.FilteredImageEventListener)=> {
             listener.onFilterAdded(event);
@@ -75,9 +76,11 @@ class FilteredImage {
      * TODO: キャッシュ機構をつける
      */
     private reApplyFilters(): void {
-        this.resultImageData = this.appliedImageFilters.reduce((imageData: ImageData, filter: ImageFilter)=> {
-            return filter.process(imageData);
-        }, this.originalImageData);
+        var imageData = this.originalImageData;
+        for(var i = 0, _len = this.appliedImageFilters.length; i < _len; i++){
+            imageData = this.appliedImageFilters[i].process(imageData);
+        }
+        this.resultImageData = imageData;
     }
 }
 

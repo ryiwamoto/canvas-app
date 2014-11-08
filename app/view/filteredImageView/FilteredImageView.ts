@@ -74,6 +74,7 @@ class FilteredImageView implements FilteredImageEvents.FilteredImageEventListene
         this.canvasElement.height = imageData.height;
         this.canvasElement.getContext("2d").putImageData(imageData, 0, 0);
         this.imageElement.src = this.canvasElement.toDataURL();
+        window["resultImage"] = this.canvasElement.toDataURL();
     }
 }
 

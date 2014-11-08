@@ -1,7 +1,12 @@
 /*
+<div id="image-filter-menu-view"></div>
+<div id="filtered-image-view" style="max-width: 500px; height: auto;"></div>
+<div id="applied-image-list-view"></div>
 .filtered-image-view {
     background-color: white;
     border: 1px solid #333;
     display: inline-block;
 }
 */
+
+

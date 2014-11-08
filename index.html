@@ -2,17 +2,19 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title></title>
+    <title>画像処理アプリ</title>
 
     <!-- bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="app/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="app/lib/bootstrap/dist/css/bootstrap-theme.css">
 </head>
 <body>
 
-<div id="filtered-image-view" style="max-width: 500px; height: auto;"></div>
-<div id="applied-image-list-view"></div>
-<div id="image-filter-menu-view"></div>
+<div class="container-fluid">
+    <div id="image-filter-menu-view" class="col-md-2"></div>
+    <div id="filtered-image-view" class="col-xs-3 col-md-8" style="max-width: 500px; height: auto;"></div>
+    <div id="applied-image-list-view" class="col-xs-4 col-md-2"></div>
+</div>
 
 
 <div id="tmpContainer"></div>
@@ -29,7 +31,7 @@
 <script src="app/lib/es6-promise/promise.min.js"></script>
 <!-- bootstrap -->
 <script src="app/lib/jquery/dist/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="app/lib/bootstrap/dist/js/bootstrap.min.js"></script>
 <!-- app -->
 <script src="public/scripts/all.js"></script>
 
