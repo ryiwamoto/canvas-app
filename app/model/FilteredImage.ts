@@ -77,7 +77,7 @@ class FilteredImage {
      */
     private reApplyFilters(): void {
         var imageData = this.originalImageData;
-        for(var i = 0, _len = this.appliedImageFilters.length; i < _len; i++){
+        for (var i = 0, _len = this.appliedImageFilters.length; i < _len; i++) {
             imageData = this.appliedImageFilters[i].process(imageData);
         }
         this.resultImageData = imageData;
