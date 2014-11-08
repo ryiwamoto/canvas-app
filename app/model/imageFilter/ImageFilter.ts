@@ -93,7 +93,7 @@ class ImageFilter {
          */
         var m2: number, m1: number, r: number, g: number, b: number;
         if (l <= 0.5) {
-            m2 = l * (s * 1);
+            m2 = l * (s + 1);
         } else {
             m2 = l + s - l * s;
         }
@@ -101,7 +101,7 @@ class ImageFilter {
         r = this.hueToRGB(m1, m2, h + 1 / 3);
         g = this.hueToRGB(m1, m2, h);
         b = this.hueToRGB(m1, m2, h - 1 / 3);
-        return [r, g, b];
+        return [r * 255 , g * 255, b * 255];
     }
 
     /**

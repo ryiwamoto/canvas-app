@@ -5,11 +5,13 @@ import ImageFilterFactoriesProvider = require("../model/imageFilter/ImageFilterF
 
 import AutoBinalizationFilter = require("./AutoBinalizationFilter");
 import DetherBinalizationFilter = require("./DetherBinalizationFilter");
+import ToneCurveFilter = require("./ToneCurveFilter");
 
 //将来的にビルドプロセスで自動化する
 var provider =
     new ImageFilterFactoriesProvider()
         .add(AutoBinalizationFilter)
-        .add(DetherBinalizationFilter);
+        .add(DetherBinalizationFilter)
+        .add(ToneCurveFilter);
 
 export = provider;

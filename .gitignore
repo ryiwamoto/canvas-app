@@ -67,3 +67,4 @@ app/lib
 webpack-tmp
 .tmp
 
+typings
