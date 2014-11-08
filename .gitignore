@@ -69,3 +69,4 @@ webpack-tmp
 
 typings
 public/scripts/all.js
+.DS_Store

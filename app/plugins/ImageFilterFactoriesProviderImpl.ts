@@ -7,6 +7,7 @@ import AutoBinalizationFilter = require("./AutoBinalizationFilter");
 import DetherBinalizationFilter = require("./DetherBinalizationFilter");
 import MonochromeInversionFilter = require("./MonochromeInversionFilter");
 import PosterizationFilter = require("./PosterizationFilter");
+import SolarizationFilter = require("./SolarizationFilter");
 
 //将来的にビルドプロセスで自動化する
 var provider =
@@ -14,6 +15,7 @@ var provider =
         .add(AutoBinalizationFilter)
         .add(DetherBinalizationFilter)
         .add(MonochromeInversionFilter)
-        .add(PosterizationFilter);
+        .add(PosterizationFilter)
+        .add(SolarizationFilter);
 
 export = provider;
