@@ -8,7 +8,7 @@ import ToneCurveFilter = require("./ToneCurveFilter");
 /**
  * トーンカーブによる画像フィルター。変化なし。
  */
-class MonochromeInversionFilter extends ToneCurveFilter {
+class PosterizationFilter extends ToneCurveFilter {
     /**
      * @param name 画像フィルター名
      */
@@ -22,23 +22,31 @@ class MonochromeInversionFilter extends ToneCurveFilter {
      * @returns {number}
      */
     calcFilterLuminance(lightness: number): number {
-        return -lightness + 1;
+        if (lightness <= 0.25) {
+            return 0;
+        } else if (lightness <= 0.5) {
+            return 0.5;
+        } else if (lightness <= 0.75) {
+            return 0.75;
+        } else {
+            return 1;
+        }
     }
 }
 
 /**
  * ディザパターンを使ってハーフトーン処理を行う画像処理フィルターのファクトリ
  */
-class MonochromeInversionFilterFactory implements ImageFilterFactory {
+class PosterizationFilterFactory implements ImageFilterFactory {
     /**
      * 生成する画像処理フィルターの名前
      */
-    imageFilterName: string = "ネガ・ポジ反転";
+    imageFilterName: string = "ポスタリゼーション";
 
     /**
      * 生成する画像処理フィルターの説明文
      */
-    imageFilterDescription: string = "メイドを反転させます";
+    imageFilterDescription: string = "画像の色数を減らし、イラストのような感じを表現できます。";
 
     /**
      * 画像処理フィルターを生成するために必要な設定項目を返す
@@ -52,10 +60,9 @@ class MonochromeInversionFilterFactory implements ImageFilterFactory {
      * @param config 設定項目
      */
     create(config: ImageFilterConfig): ImageFilter {
-        return new MonochromeInversionFilter(this.imageFilterName);
+        return new PosterizationFilter(this.imageFilterName);
     }
 }
 
-var factoryImpl = new MonochromeInversionFilterFactory();
+var factoryImpl = new PosterizationFilterFactory();
 export = factoryImpl;
-

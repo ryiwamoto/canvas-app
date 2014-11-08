@@ -6,12 +6,14 @@ import ImageFilterFactoriesProvider = require("../model/imageFilter/ImageFilterF
 import AutoBinalizationFilter = require("./AutoBinalizationFilter");
 import DetherBinalizationFilter = require("./DetherBinalizationFilter");
 import MonochromeInversionFilter = require("./MonochromeInversionFilter");
+import PosterizationFilter = require("./PosterizationFilter");
 
 //将来的にビルドプロセスで自動化する
 var provider =
     new ImageFilterFactoriesProvider()
         .add(AutoBinalizationFilter)
         .add(DetherBinalizationFilter)
-        .add(MonochromeInversionFilter);
+        .add(MonochromeInversionFilter)
+        .add(PosterizationFilter);
 
 export = provider;
