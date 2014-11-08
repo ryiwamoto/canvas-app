@@ -27,7 +27,7 @@ class MonochromeInversionFilter extends ToneCurveFilter {
 }
 
 /**
- * ディザパターンを使ってハーフトーン処理を行う画像処理フィルターのファクトリ
+ * 画像処理フィルターのファクトリ
  */
 class MonochromeInversionFilterFactory implements ImageFilterFactory {
     /**

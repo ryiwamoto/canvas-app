@@ -6,9 +6,9 @@ import ImageFilterFactory = require("../model/imageFilter/ImageFilterFactory");
 import ToneCurveFilter = require("./ToneCurveFilter");
 
 /**
- * トーンカーブによる画像フィルター。変化なし。
+ * トーンカーブ自動補正画像フィルター。変化なし。
  */
-class PosterizationFilter extends ToneCurveFilter {
+class AutoToneCurveFilter extends ToneCurveFilter {
     /**
      * @param name 画像フィルター名
      */
@@ -23,13 +23,11 @@ class PosterizationFilter extends ToneCurveFilter {
      */
     calcFilterLuminance(lightness: number): number {
         if (lightness <= 0.25) {
-            return 0;
-        } else if (lightness <= 0.5) {
-            return 0.5;
-        } else if (lightness <= 0.75) {
-            return 0.75;
-        } else {
+            return 0.1;
+        } else if (lightness >= 0.75) {
             return 1;
+        } else {
+            return 2 * lightness - 0.5;
         }
     }
 }
@@ -37,16 +35,16 @@ class PosterizationFilter extends ToneCurveFilter {
 /**
  * 画像処理フィルターのファクトリ
  */
-class PosterizationFilterFactory implements ImageFilterFactory {
+class AutoToneCurveFilterFactory implements ImageFilterFactory {
     /**
      * 生成する画像処理フィルターの名前
      */
-    imageFilterName: string = "ポスタリゼーション";
+    imageFilterName: string = "コントラスト強調";
 
     /**
      * 生成する画像処理フィルターの説明文
      */
-    imageFilterDescription: string = "画像の色数を減らし、イラストのような感じを表現できます。";
+    imageFilterDescription: string = "コントラストを強調します";
 
     /**
      * 画像処理フィルターを生成するために必要な設定項目を返す
@@ -60,9 +58,9 @@ class PosterizationFilterFactory implements ImageFilterFactory {
      * @param config 設定項目
      */
     create(config: ImageFilterConfig): ImageFilter {
-        return new PosterizationFilter(this.imageFilterName);
+        return new AutoToneCurveFilter(this.imageFilterName);
     }
 }
 
-var factoryImpl = new PosterizationFilterFactory();
+var factoryImpl = new AutoToneCurveFilterFactory();
 export = factoryImpl;
