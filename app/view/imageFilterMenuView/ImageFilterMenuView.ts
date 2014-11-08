@@ -26,6 +26,9 @@ class ImageFilterMenuView {
         this.container.on("click", ImageFilterMenuView.menuItemClassName, this.onItemClicked.bind(this));
     }
 
+    /**
+     * 描画する
+     */
     render(): void {
         this.container.html(template({
             items: this.factories

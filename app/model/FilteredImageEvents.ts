@@ -6,17 +6,16 @@ import ImageFilter = require("imageFilter/ImageFilter");
  * 画像処理フィルターが適用された画像のイベントを受け取るリスナーのインターフェース
  */
 export interface FilteredImageEventListener {
-    onFilterAdded(event: FilterAddedEvent): void;
+    onFilterChanged(event: FilterChangedEvent): void;
 }
 
 /**
  * 画像処理フィルターが追加されたときのイベント
  */
-export class FilterAddedEvent{
+export class FilterChangedEvent{
     /**
-     * @param addedFilter 追加された画像処理フィルター
-     * @param resultImage フィルター後の画像
+     * @param appliedFilters 適用されている画像処理フィルターのリスト
      */
-    constructor(public addedFilter: ImageFilter){
+    constructor(public appliedFilters: ImageFilter[]){
     }
 }

@@ -1,5 +1,6 @@
 ///<reference path="../../model/reference.ts"/>
 ///<reference path="./applied_image_filter_list_view.d.ts"/>
+///<reference path="../../lib/jquery/jquery.d.ts"/>
 
 import ImageFilter = require("../../model/imageFilter/ImageFilter");
 import FilteredImage = require("../../model/FilteredImage");
@@ -17,13 +18,16 @@ class AppliedImageFilterListView implements FilteredImageEvents.FilteredImageEve
      */
     constructor(private filteredImage: FilteredImage, private container: HTMLElement) {
         this.filteredImage.addEventListener(this);
+        $(this.container).on("click", ".close", (event: JQueryEventObject)=> {
+            this.filteredImage.removeImageFilter(parseInt($(event.currentTarget).data("index"), 10));
+        });
     }
 
     /**
-     * 画像処理フィルターが追加されたときのコールバック
+     * 画像処理フィルターが変化したときのコールバック
      * @param event
      */
-    onFilterAdded(event: FilteredImageEvents.FilterAddedEvent): void {
+    onFilterChanged(event: FilteredImageEvents.FilterChangedEvent): void {
         this.render();
     }
 

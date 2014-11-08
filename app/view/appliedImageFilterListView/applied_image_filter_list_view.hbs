@@ -1,5 +1,10 @@
+<h4>適用済みフィルター</h4>
 <ul class="applied-image-filter-list">
     {{#each filters}}
-        <li class="applied-image-filter-item list-group-item">{{name}}</li>
+        <li class="applied-image-filter-item list-group-item">{{name}}
+            <button type="button" class="close" data-index="{{@index}}">
+                <span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+            </button>
+        </li>
     {{/each}}
 </ul>

@@ -2,3 +2,4 @@
 /// <reference path="./ImageLoader.ts" />
 /// <reference path="./ImgElementToImageDataConverter.ts" />
 /// <reference path="./LocalImageLoader.ts" />
+/// <reference path="./ImageDataCopyMaker.ts" />

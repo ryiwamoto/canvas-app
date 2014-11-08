@@ -57,10 +57,10 @@ class FilteredImageView implements FilteredImageEvents.FilteredImageEventListene
     }
 
     /**
-     * 画像処理フィルターが追加されたときのコールバック
+     * 画像処理フィルターが変化したときのコールバック
      * @param event
      */
-    onFilterAdded(event: FilteredImageEvents.FilterAddedEvent): void {
+    onFilterChanged(event: FilteredImageEvents.FilterChangedEvent): void {
         this.render();
     }
 
