@@ -1,5 +1,5 @@
 ///<reference path="../../model/reference.ts"/>
-/// <amd-dependency path="./style.css" />
+/// <amd-dependency path="!style!css!./style.css" />
 
 import FilteredImage = require("../../model/FilteredImage")
 import FilteredImageEvents = require("../../model/FilteredImageEvents");

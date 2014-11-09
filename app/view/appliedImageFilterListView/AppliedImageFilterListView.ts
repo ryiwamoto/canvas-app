@@ -1,6 +1,8 @@
 ///<reference path="../../model/reference.ts"/>
 ///<reference path="./applied_image_filter_list_view.d.ts"/>
 ///<reference path="../../lib/jquery/jquery.d.ts"/>
+///<reference path="../../lib/jqueryui/jqueryui.d.ts"/>
+/// <amd-dependency path="./style.css" />
 
 import ImageFilter = require("../../model/imageFilter/ImageFilter");
 import FilteredImage = require("../../model/FilteredImage");
@@ -36,6 +38,27 @@ class AppliedImageFilterListView implements FilteredImageEvents.FilteredImageEve
      */
     render(): void {
         this.container.innerHTML = template({filters: this.filteredImage.appliedImageFilters});
+        this.whenFilterIsSorted((from: number, to: number)=> {
+            this.filteredImage.moveImageFIlter(from, to);
+        });
+    }
+
+    private whenFilterIsSorted(handler: (from: number, to: number) =>void): void {
+        //remove sortable functionality for previous elements completely.
+        $(this.container).find(".applied-image-filter-list").sortable().sortable("destroy");
+
+        //make sortable
+        var $list = $(this.container).find(".applied-image-filter-list");
+        var from: number = null;
+        $list.sortable({cursor: "move"})
+            .disableSelection()
+            .on("sortstart", (event: JQueryEventObject, ui: JQueryUI.SortableUIParams)=> {
+                from = $list.find("li").index(ui.item);
+            })
+            .on("sortupdate", (event: JQueryEventObject, ui: JQueryUI.SortableUIParams)=> {
+                var to = $list.find("li").index(ui.item);
+                handler(from, to);
+            });
     }
 }
 

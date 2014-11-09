@@ -12,7 +12,7 @@ webpackConfig =
     filename: 'scripts/all.js'
   module:
     loaders: [
-      { test: /\.css$/, loader: "style-loader!css-loader" }
+      { test: /\.css$/, loader: "style!css" }
     ]
   resolve:
     extensions: ["", ".ts", ".js"]

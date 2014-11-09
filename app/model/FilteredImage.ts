@@ -65,7 +65,9 @@ class FilteredImage {
      * @param filter 画像処理フィルター
      */
     addImageFilter(filter: ImageFilter): void {
-        return this.spliceImageFilter(this.appliedImageFilters.length, 0, filter);
+        this.spliceImageFilter(this.appliedImageFilters.length, 0, filter);
+        this.reApplyFilters();
+        this.fireChangeEvent();
     }
 
     /**
@@ -73,23 +75,45 @@ class FilteredImage {
      * @param index 削除する画像処理フィルターのindex
      */
     removeImageFilter(index: number): void {
-        return this.spliceImageFilter(index, 0)
+        this.spliceImageFilter(index, 1);
+        this.reApplyFilters();
+        this.fireChangeEvent();
+    }
+
+    /**
+     * 画像処理フィルターを移動させる
+     * @param from 移動前index
+     * @param to 移動後のindex
+     */
+    moveImageFIlter(from: number, to: number): void {
+        console.log(from, to);
+        var spliced = this.spliceImageFilter(from, 1);
+        console.log("spliced", spliced);
+        var filter = spliced[0];
+        console.log(filter);
+        this.spliceImageFilter(to, 0, filter);
+        this.reApplyFilters();
+        this.fireChangeEvent();
     }
 
     /**
      * 画像処理フィルターを入れ替える
      * @param index 配列を変化させ始める要素の添字
-     * @param howMany 古い要素の数を示す整数
+     * @param howMany 配列から取り除く古い要素の数
      * @param filters 配列に追加する要素
+     * @returns {ImageFilter[]}
      */
-    spliceImageFilter(index: number, howMany: number, ...filters: ImageFilter[]): void {
+    private spliceImageFilter(index: number, howMany: number, ...filters: ImageFilter[]): ImageFilter[] {
         if (isNaN(index) || index < 0 || index > this.appliedImageFilters.length) {
             throw new Error('given index is out of range: ' + index);
         }
-        this.appliedImageFilters.splice.apply(this.appliedImageFilters, [].concat(index, howMany, filters));
-        this.reApplyFilters();
+        return this.appliedImageFilters.splice.apply(this.appliedImageFilters, [].concat(index, howMany, filters));
+    }
 
-        //fire events
+    /**
+     * 画像処理フィルター変更イベントを通知する
+     */
+    private fireChangeEvent(): void {
         var event = new FilteredImageEvents.FilterChangedEvent(this.appliedImageFilters);
         this.eventListeners.forEach((listener: FilteredImageEvents.FilteredImageEventListener)=> {
             listener.onFilterChanged(event);
