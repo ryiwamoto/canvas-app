@@ -75,5 +75,3 @@ gulp.task 'watch', ->
   $.watch 'app/view/**/*.hbs', (event, callback) => runSequence('template', 'webpack', callback);
   $.watch 'app/**/*.ts', (event, callback) => runSequence('ts', 'webpack', callback);
   $.watch ["app/**/*.css", "!app/lib/**/*.css"], (event, callback) => runSequence('css', 'webpack', callback);
-
-gulp.task 'default', ['full-build']
