@@ -42,6 +42,7 @@ class LocalImageLoaderView {
      * ロカール画像読み込みダイアログを開く
      */
     open(): Promise<HTMLElement> {
+        $.fn.modal.Constructor.DEFAULTS.keyboard = false;
         this.dialog = this.createDialogElement();
         var fileInputContainer = this.dialog.find("#js_file-input-container");
 
