@@ -86,11 +86,8 @@ class FilteredImage {
      * @param to 移動後のindex
      */
     moveImageFIlter(from: number, to: number): void {
-        console.log(from, to);
         var spliced = this.spliceImageFilter(from, 1);
-        console.log("spliced", spliced);
         var filter = spliced[0];
-        console.log(filter);
         this.spliceImageFilter(to, 0, filter);
         this.reApplyFilters();
         this.fireChangeEvent();
